@@ -5,6 +5,7 @@ function! SourceCounter#View(bang) abort
     for ft in s:support_ft
         call add(result, s:counter(ft))
     endfor
+    let result = sort(deepcopy(result), function('s:compare'))
     let table = s:draw_table(result)
     if a:bang
         tabnew
@@ -13,6 +14,15 @@ function! SourceCounter#View(bang) abort
         endfor
     else
         echo join(table, "\n")
+    endif
+endfunction
+
+function! s:compare(a, b) abort
+    let m = get(g:, 'source_counter_sort', 'files')
+    if m ==# 'lines'
+        return a:a[2] == a:b[2] ? 0 : a:a[2] > a:b[2] ? -1 : 1
+    else
+        return a:a[1] == a:b[1] ? 0 : a:a[1] > a:b[1] ? -1 : 1
     endif
 endfunction
 " https://en.wikipedia.org/wiki/Box-drawing_character
@@ -36,6 +46,11 @@ function! s:draw_table(rst) abort
         let bottom_right_corner = '*'
         let side = '|'
         let top_bottom_side = '-'
+        let middle = '*'
+        let top_middle = '*'
+        let left_middle = '*'
+        let right_middle = '*'
+        let bottom_middle = '*'
     endif
     let table = []
     let top_line = top_left_corner
