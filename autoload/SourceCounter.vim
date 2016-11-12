@@ -1,14 +1,19 @@
 scriptencoding utf-8
 let s:support_ft = ['vim', 'java', 'c', 'py']
-function! SourceCounter#View() abort
+function! SourceCounter#View(bang) abort
     let result = []
     for ft in s:support_ft
         call add(result, s:counter(ft))
     endfor
-    tabnew
-    for line in s:draw_table(result)
-        call append(line('$'), line)
-    endfor
+    let table = s:draw_table(result)
+    if a:bang
+        tabnew
+        for line in table
+            call append(line('$'), line)
+        endfor
+    else
+        echo join(table, "\n")
+    endif
 endfunction
 " https://en.wikipedia.org/wiki/Box-drawing_character
 function! s:draw_table(rst) abort
@@ -72,7 +77,6 @@ function! s:draw_table(rst) abort
     endfor
     let table[-1] = bottom_line
     return table
-    
 endfunction
 
 function! s:counter(ft) abort
