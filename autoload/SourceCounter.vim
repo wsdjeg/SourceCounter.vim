@@ -3,7 +3,10 @@ let s:support_ft = ['vim', 'java', 'c', 'py']
 function! SourceCounter#View(bang) abort
     let result = []
     for ft in s:support_ft
-        call add(result, s:counter(ft))
+        let _rs = s:counter(ft)
+        if !empty(_rs)
+            call add(result, _rs)
+        endif
     endfor
     let result = sort(deepcopy(result), function('s:compare'))
     let table = s:draw_table(result)
@@ -99,12 +102,15 @@ function! s:counter(ft) abort
     let partten = '**/*.' . a:ft
     if executable('ag')
         if has('nvim')
-            let files = systemlist(['ag','--' . a:ft, '-l'])
+            let files = systemlist(['ag','-g', '.' . a:ft . '$'])
         else
             let files = split(system(shellescape('ag --' . a:ft . ' -l')), "\n")
         endif
     else
         let files = globpath(l:path, l:partten, 0, 1)
+    endif
+    if len(files) == 0
+        return []
     endif
     let lines = 0
     if has('nvim')
