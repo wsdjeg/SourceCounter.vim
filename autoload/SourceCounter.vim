@@ -97,11 +97,23 @@ endfunction
 function! s:counter(ft) abort
     let path = getcwd()
     let partten = '**/*.' . a:ft
-    let files = globpath(l:path, l:partten, 0, 1)
+    if executable('ag')
+        if has('nvim')
+            let files = systemlist(['ag','--' . a:ft, '-l'])
+        else
+            let files = split(system(shellescape('ag --' . a:ft . ' -l')), "\n")
+        endif
+    else
+        let files = globpath(l:path, l:partten, 0, 1)
+    endif
     let lines = 0
-    for fl in files
-        let lines += str2nr(matchstr(system('wc -l '. fl), '^\d*'))
-    endfor
+    if has('nvim')
+        let lines = matchstr(systemlist(['wc', '-l'] + files)[-1], '\d\+')
+    else
+        for fl in files
+            let lines += str2nr(matchstr(system('wc -l '. fl), '\d\+'))
+        endfor
+    endif
     return [a:ft, len(files), lines]
 endfunction
 
