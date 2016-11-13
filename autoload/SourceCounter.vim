@@ -84,11 +84,11 @@ function! s:draw_table(rst) abort
     let result = [['filetype', 'files', 'lines']] + a:rst
     for rsl in result
         let ft_line = side
-                    \ . rsl[0] . repeat(' ', 15 - strchars(rsl[0]))
+                    \ . rsl[0] . repeat(' ', 15 - strwidth(rsl[0]))
                     \ . side
-                    \ . rsl[1] . repeat(' ', 15 - strchars(rsl[1]))
+                    \ . rsl[1] . repeat(' ', 15 - strwidth(rsl[1]))
                     \ . side
-                    \ . rsl[2] . repeat(' ', 15 - strchars(rsl[2]))
+                    \ . rsl[2] . repeat(' ', 15 - strwidth(rsl[2]))
                     \ . side
         call add(table, ft_line)
         call add(table, middle_line)
