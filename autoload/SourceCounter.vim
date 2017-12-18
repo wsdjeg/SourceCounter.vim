@@ -104,7 +104,7 @@ function! s:counter(ft) abort
         if has('nvim')
             let files = systemlist(['ag','-g', '.' . a:ft . '$'])
         else
-            let files = split(system(shellescape('ag --' . a:ft . ' -l')), "\n")
+            let files = split(system('ag -g .'.a:ft.'$'),nr2char(10))
         endif
     else
         let files = globpath(l:path, l:partten, 0, 1)
