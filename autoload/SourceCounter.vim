@@ -1,8 +1,14 @@
 scriptencoding utf-8
-let s:support_ft = ['vim', 'java', 'c', 'py']
-function! SourceCounter#View(bang) abort
+let s:support_ft = ['vim', 'java', 'c', 'py', 'md', 'txt']
+function! SourceCounter#View(bang, ...) abort
     let result = []
-    for ft in s:support_ft
+    if a:0
+        let fts = a:000
+    else
+        let fts = s:support_ft
+    endif
+    echom string(fts)
+    for ft in fts
         let _rs = s:counter(ft)
         if !empty(_rs)
             call add(result, _rs)
