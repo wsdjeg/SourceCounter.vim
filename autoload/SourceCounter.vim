@@ -120,7 +120,13 @@ function! s:counter(ft) abort
     endif
     let lines = 0
     if has('nvim')
-        let lines = matchstr(systemlist(['wc', '-l'] + files)[-1], '\d\+')
+        if len(files) > 380
+            while !empty(files)
+                let lines += matchstr(systemlist(['wc', '-l'] + remove(files, 0, min([380, len(files) - 1])))[-1], '\d\+')
+            endwhile
+        else
+            let lines = matchstr(systemlist(['wc', '-l'] + files)[-1], '\d\+')
+        endif
     else
         for fl in files
             let lines += str2nr(matchstr(system('wc -l '. fl), '\d\+'))
